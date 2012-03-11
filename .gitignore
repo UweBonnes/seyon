@@ -1,0 +1,8 @@
+Makefile
+SeParse.c
+*.o
+*~
+seyon
+seyon._man
+version.h
+y.tab.h
