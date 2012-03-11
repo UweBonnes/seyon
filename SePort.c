@@ -23,6 +23,7 @@
 #include <fcntl.h>
 #include <errno.h>
 #include <limits.h>
+#include <ttylock.h>
 
 #include <X11/Intrinsic.h>
 
@@ -989,16 +990,38 @@ int
 LockModem(modem)
 	 String modem;
 {
+#if 0
   strcpy(modem_port, modem);
   return lock_tty();
+#else
+  int res = ttylock(modem);
+  if(res)
+  {
+      SePErrorF("Modem locked by process %d\n", res);
+      return 1;
+  }
+  else
+      return 0;
+#endif
 }
 
 int
 UnlockModem(modem)
 	 String modem;
 {
+#if 0
   unlock_tty();
   return 0;
+#else
+  int res = ttyunlock(modem);
+  if(res)
+  {
+      SePErrorF("Modem unlocked collision with process %d\n", res);
+      return 1;
+  }
+  else
+      return 0;
+#endif  
 }
 
 int
