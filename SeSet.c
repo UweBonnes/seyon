@@ -56,7 +56,7 @@ struct _setToggle {
 
 struct _setRadio {
   String          name;
-  String          button[10];
+  String          button[12];
   int             activeIndex;
   int             (*call_back)();
 };
@@ -82,7 +82,7 @@ static struct _setToggle set_toggle[] =
 static struct _setRadio setRadio[] =
 {
   {"baud", {"300", "1200", "2400", "4800", "9600", "19200", "38400",
-    "57600", "115200",
+            "57600", "115200", "230400", "460800",
     NULL}, 1, MenuSetGetBaud},
   {"bits", {"5", "6", "7", "8", NULL}, 1, MenuSetGetCSize},
   {"parity", {"none", "odd", "even", NULL}, 1, MenuSetGetParity},
