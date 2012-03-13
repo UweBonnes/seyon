@@ -48,15 +48,6 @@
 #endif /* SVR4 */
 #endif /* LF_USE_DEV_NUMBERS */
 
-#if USE_NONSTD_BAUD
-#ifdef linux
-#include <linux/serial.h>
-#include <sys/ioctl.h>
-#include <linux/fs.h>
-#include <linux/tty.h>
-#endif
-#endif
-
 #include "seyon.h"
 #include "SeDecl.h"
 
@@ -598,16 +589,6 @@ long
 mbaud(s)
      char           *s;
 {
-#if USE_NONSTD_BAUD
-#ifdef linux
-  static struct serial_struct ser_io;
-
-  if (ioctl(mfd, TIOCGSERIAL, &ser_io) < 0) {
-    SePError("Could not get linux serial info");
-    return -1;
-  }
-#endif
-#endif
 
   if (s != NULL) {
     /* this gives a more limited, realistic */
@@ -632,41 +613,18 @@ mbaud(s)
       break;
     case 38400:
       baudrate = B38400;
-#if USE_NONSTD_BAUD
-#ifdef linux
-      ser_io.flags &= ~ASYNC_SPD_MASK;
-#endif
-#endif
-      break;
-#if USE_NONSTD_BAUD
-#ifdef linux
     case 57600:
-      baudrate = B38400;
-      ser_io.flags &= ~ASYNC_SPD_MASK;
-      ser_io.flags |= ASYNC_SPD_HI;
+      baudrate = B57600;
       break;
     case 115200:
-      baudrate = B38400;
-      ser_io.flags &= ~ASYNC_SPD_MASK;
-      ser_io.flags |= ASYNC_SPD_VHI;
+      baudrate = B115200;
       break;
-#endif
-#endif
     default:
       return (-1);
     }
     io_set_speed(&pmode, baudrate);
     if (mfd != -1) {
       io_set_attr(mfd, &pmode);
-#if USE_NONSTD_BAUD
-#ifdef linux
-      if (baudrate == B38400)
-	if (ioctl(mfd, TIOCSSERIAL, &ser_io) < 0) {
-	  SePError("Could not set linux serial info");
-	  return -1;
-	}
-#endif
-#endif
     }
   }
 
@@ -687,22 +645,11 @@ mbaud(s)
   case B19200:
     return (19200);
   case B38400:
-#if USE_NONSTD_BAUD
-#ifdef linux
-    if (mfd != -1)
-      if (ioctl(mfd, TIOCGSERIAL, &ser_io) < 0) {
-		SePError("Could not get linux serial info");
-		return -1;
-      }
-
-    if ((ser_io.flags & ASYNC_SPD_MASK) == ASYNC_SPD_VHI)
-      return 115200;
-    else if ((ser_io.flags & ASYNC_SPD_MASK) == ASYNC_SPD_HI)
-      return 57600;
-    else
-#endif
-#endif
-      return 38400;
+    return 38400;
+  case B57600:
+    return 57600;
+  case B115200:
+    return 115200;
   }
 
   SeError("Consistency error in baud rate");
