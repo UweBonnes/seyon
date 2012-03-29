@@ -614,6 +614,7 @@ mbaud(s)
       break;
     case 38400:
       baudrate = B38400;
+      break;
     case 57600:
       baudrate = B57600;
       break;
