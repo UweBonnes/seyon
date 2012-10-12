@@ -354,8 +354,9 @@ MdmSetGetBaud(baudIndex)
      int             baudIndex;
 {
   static char    *baud[] = {"0", "300", "1200", "2400", "4800", "9600", 
-                            "19200", "38400", "57600", "115200", 
-                            "230400", "460800", NULL};
+                            "19200", "38400", "57600", "115200",
+                            "230400", "460800", "1000000",
+                            "2000000", NULL};
   long            retBaud;
 
   if (baudIndex != -1)
@@ -627,6 +628,12 @@ mbaud(s)
     case 460800:
       baudrate = B460800;
       break;
+    case 1000000:
+      baudrate = B1000000;
+      break;
+    case 2000000:
+      baudrate = B2000000;
+      break;
     default:
       return (-1);
     }
@@ -662,6 +669,10 @@ mbaud(s)
     return 230400;
   case B460800:
     return 460800;
+  case B1000000:
+    return 1000000;
+  case B2000000:
+    return 2000000;
   }
 
   SeError("Consistency error in baud rate");
